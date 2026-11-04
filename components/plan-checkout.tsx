@@ -5,7 +5,7 @@ import { useEffect, useRef, useState } from "react";
 
 import { CheckoutMessage } from "@/components/checkout-message";
 import { PlanCard } from "@/components/plan-card";
-import { LightButton } from "@/components/ui/light-button";
+import { Button } from "@/components/ui/button";
 
 const TOKEN = process.env.NEXT_PUBLIC_PADDLE_CLIENT_TOKEN ?? "";
 
@@ -27,7 +27,7 @@ export function PlanCheckout() {
         eventCallback: (event) => {
           if (event.name === CheckoutEventNames.CHECKOUT_COMPLETED) completed.current = true;
           if (event.name === CheckoutEventNames.CHECKOUT_CLOSED && !completed.current) {
-            setMessage({ kind: "notice", text: "Checkout closed. Nothing was charged." });
+            setMessage({ kind: "notice", text: "checkout closed. nothing was charged." });
           }
         },
       });
@@ -60,18 +60,18 @@ export function PlanCheckout() {
       });
     } catch (error) {
       console.error(error);
-      setMessage({ kind: "error", text: "Couldn't start the checkout. Try again." });
+      setMessage({ kind: "error", text: "couldn't start the checkout. try again." });
     } finally {
       setOpening(false);
     }
   }
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-e2e-2">
       <PlanCard>
-        <LightButton disabled={!ready || opening} aria-busy={opening} onClick={openCheckout}>
-          {opening ? "Opening checkout…" : "Subscribe"}
-        </LightButton>
+        <Button disabled={!ready || opening} aria-busy={opening} onClick={openCheckout} className="w-full">
+          {opening ? "opening checkout…" : "subscribe"}
+        </Button>
       </PlanCard>
       {message && <CheckoutMessage kind={message.kind}>{message.text}</CheckoutMessage>}
     </div>

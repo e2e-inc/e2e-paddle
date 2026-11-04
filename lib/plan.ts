@@ -1,5 +1,5 @@
 // Amounts in cents.
-export const PLAN = { name: "e2e Pro", amount: 2000, interval: "month" } as const;
+export const PLAN = { name: "e2e pro", amount: 2000, interval: "month" } as const;
 
 const usd = new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" });
 

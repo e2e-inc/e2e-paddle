@@ -29,7 +29,7 @@ export const test = withPaddle.extend<{ openCheckout: OpenCheckout }>({
     const transactionIds: string[] = [];
     await use(async () => {
       const created = browser.waitForResponse("**/checkout");
-      await screen.getByRole("button", "Subscribe").click();
+      await screen.getByRole("button", "subscribe").click();
       const { transactionId } = (await (await created).json()) as { transactionId: string };
       transactionIds.push(transactionId);
       await expect(browser.locator(PADDLE_FRAME)).toBeVisible({ timeout: 15_000 });

@@ -2,13 +2,13 @@
 
 A checkout that takes real Paddle payments in a sandbox, used as an example of end-to-end testing a payment page you don't own with [e2e](https://www.npmjs.com/package/e2e).
 
-![Checkout page with the e2e Pro plan and a Subscribe button](docs/screenshot.png)
+![Checkout page with the e2e pro plan and a subscribe button](docs/screenshot.png)
 
 ## How it works
 
 The checkout sells one monthly subscription with Paddle's overlay checkout, the flow Paddle recommends: Paddle's checkout opens in an iframe over our page, and the shopper pays there.
 
-- **Checkout** (`app/page.tsx`, `components/plan-checkout.tsx`) shows the plan and a Subscribe button, and opens Paddle's checkout with Paddle.js.
+- **Checkout** (`app/page.tsx`, `components/plan-checkout.tsx`) shows the plan and a subscribe button, and opens Paddle's checkout with Paddle.js.
 - **`POST /checkout`** (`app/checkout/route.ts`) creates a Paddle transaction for the plan.
 - **Return page** (`app/return/page.tsx`) asks Paddle for the transaction and the subscription it created, and shows the result.
 

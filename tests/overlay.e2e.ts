@@ -26,7 +26,7 @@ describe("overlay checkout", { tags: ["overlay"], skip, retries: 2, timeout: 180
     await agent.assert("the card number field shows 4242 4242 4242 4242 and $20.00 is due today", { vision: true });
 
     await agent.act("click the Subscribe now button");
-    await expect(screen.getByTestId("payment-status")).toHaveText("Subscribed", { timeout: 30_000 });
+    await expect(screen.getByTestId("payment-status")).toHaveText("subscribed", { timeout: 30_000 });
 
     const transaction = await paddle.transactions.get(transactionId);
     expect(transaction.status).toBe("completed");
@@ -77,7 +77,7 @@ describe("overlay checkout", { tags: ["overlay"], skip, retries: 2, timeout: 180
       await agent.waitFor("a 3D Secure test page with Fail and Complete buttons is showing", { vision: true });
 
       await agent.act("click Complete on the 3D Secure test page");
-      await expect(screen.getByTestId("payment-status")).toHaveText("Subscribed", { timeout: 30_000 });
+      await expect(screen.getByTestId("payment-status")).toHaveText("subscribed", { timeout: 30_000 });
 
       const transaction = await paddle.transactions.get(transactionId);
       expect(transaction.status).toBe("completed");
@@ -119,11 +119,11 @@ describe("overlay checkout", { tags: ["overlay"], skip, retries: 2, timeout: 180
     await app.open("/");
     const transactionId = await openCheckout();
 
-    await agent.waitFor("Paddle's checkout is open over the page and shows e2e Pro at $20.00/month", { vision: true });
+    await agent.waitFor("Paddle's checkout is open over the page and shows e2e pro at $20.00/month", { vision: true });
 
     await agent.act("leave the checkout with its Return link at the top left");
     await expect(browser.locator(PADDLE_FRAME)).toBeHidden();
-    await expect(screen.getByTestId("checkout-notice")).toHaveText("Checkout closed. Nothing was charged.");
+    await expect(screen.getByTestId("checkout-notice")).toHaveText("checkout closed. nothing was charged.");
     expect((await paddle.transactions.get(transactionId)).status).toBe("draft");
   });
 });

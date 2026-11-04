@@ -1,21 +1,24 @@
 import { ApiError, type Transaction } from "@paddle/paddle-node-sdk";
+import Link from "next/link";
 import { connection } from "next/server";
 import { setTimeout as sleep } from "node:timers/promises";
 import { Suspense } from "react";
 
 import { ResultPanel } from "@/components/result-panel";
-import { OutlineLink } from "@/components/ui/outline-link";
+import { buttonClassName } from "@/components/ui/button";
 import { getPaddle } from "@/lib/paddle";
 import { formatUsd } from "@/lib/plan";
 
 export default function ReturnPage({ searchParams }: PageProps<"/return">) {
   return (
-    <main className="flex flex-1 flex-col justify-center px-6 py-10 sm:px-10">
-      <div className="mx-auto flex w-full max-w-105 flex-col gap-4">
-        <Suspense fallback={<ResultPanel pending status="Checking…" detail="Asking Paddle about this payment." />}>
+    <main className="flex flex-1 flex-col justify-center px-e2e-3 py-e2e-8 md:px-e2e-6">
+      <div className="mx-auto flex w-full max-w-105 flex-col gap-e2e-2">
+        <Suspense fallback={<ResultPanel pending status="checking…" detail="asking Paddle about this payment." />}>
           <PaymentResult searchParams={searchParams} />
         </Suspense>
-        <OutlineLink href="/">Back to checkout</OutlineLink>
+        <Link href="/" className={buttonClassName("outline", "w-full")}>
+          back to checkout
+        </Link>
       </div>
     </main>
   );
@@ -24,23 +27,23 @@ export default function ReturnPage({ searchParams }: PageProps<"/return">) {
 async function PaymentResult({ searchParams }: Pick<PageProps<"/return">, "searchParams">) {
   const { transaction_id: transactionId } = await searchParams;
   if (typeof transactionId !== "string") {
-    return <ResultPanel status="No payment" detail="Paddle sends you here after you pay." />;
+    return <ResultPanel status="no payment" detail="Paddle sends you here after you pay." />;
   }
 
   // Prerendering can resolve searchParams; Paddle must only be asked per request.
   await connection();
   const transaction = await getProcessedTransaction(transactionId);
   if (!transaction) {
-    return <ResultPanel status="Not found" detail="Paddle has no transaction with this id." />;
+    return <ResultPanel status="not found" detail="Paddle has no transaction with this id." />;
   }
 
   if (transaction.status !== "paid" && transaction.status !== "completed") {
     return (
       <ResultPanel
-        status="Not paid"
+        status="not paid"
         detail="Paddle has no payment for this checkout."
         rows={[
-          { label: "Transaction", value: transaction.id, mono: true },
+          { label: "transaction", value: transaction.id, mono: true },
           { label: "Paddle status", value: transaction.status },
         ]}
       />
@@ -48,18 +51,18 @@ async function PaymentResult({ searchParams }: Pick<PageProps<"/return">, "searc
   }
 
   const price = transaction.items[0]?.price;
-  const planName = transaction.details?.lineItems[0]?.product?.name ?? "Unknown";
+  const planName = transaction.details?.lineItems[0]?.product?.name ?? "unknown";
   const charged = formatUsd(Number(transaction.details?.totals?.grandTotal ?? 0));
   const paidBy = transaction.customer?.email ? ` by ${transaction.customer.email}` : "";
 
   if (!transaction.subscriptionId) {
     return (
       <ResultPanel
-        status="Paid"
+        status="paid"
         detail={`${charged} paid${paidBy}.`}
         rows={[
-          { label: "Plan", value: planName },
-          { label: "Transaction", value: transaction.id, mono: true },
+          { label: "plan", value: planName },
+          { label: "transaction", value: transaction.id, mono: true },
         ]}
       />
     );
@@ -71,13 +74,13 @@ async function PaymentResult({ searchParams }: Pick<PageProps<"/return">, "searc
 
   return (
     <ResultPanel
-      status="Subscribed"
+      status="subscribed"
       detail={`${planName}, ${recurring}, paid${paidBy}.`}
       rows={[
-        { label: "Plan", value: planName },
-        { label: "Paid today", value: charged },
-        { label: "Next bill", value: nextBill ? longDate(nextBill) : "None" },
-        { label: "Subscription", value: subscription.id, mono: true },
+        { label: "plan", value: planName },
+        { label: "paid today", value: charged },
+        { label: "next bill", value: nextBill ? longDate(nextBill) : "none" },
+        { label: "subscription", value: subscription.id, mono: true },
       ]}
     />
   );
@@ -107,5 +110,5 @@ async function getTransaction(id: string): Promise<Transaction | null> {
 }
 
 function longDate(date: Date): string {
-  return date.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+  return date.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }).toLowerCase();
 }
